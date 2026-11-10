@@ -34,7 +34,7 @@ begin
  return new;
 end $$;
 -- A new task cannot start completed or earn XP through its initial insert.
-alter table public.tasks drop policy insert_scope;
+drop policy insert_scope on public.tasks;
 create policy insert_scope on public.tasks for insert to authenticated
  with check(public.is_member(workspace_id) and owner_id=auth.uid() and status<>'done');
 create function public.protect_task_fields() returns trigger language plpgsql set search_path = '' as $$
