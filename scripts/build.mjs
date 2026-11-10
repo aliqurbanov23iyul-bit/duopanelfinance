@@ -8,8 +8,15 @@ for(const file of ['.env','.env.local']){
   catch(error){if(error.code!=='ENOENT') throw error;}
 }
 const define={};
+const aliases={
+  VITE_SUPABASE_URL:'DUO_SUPABASE_URL',
+  VITE_SUPABASE_PUBLISHABLE_KEY:'DUO_SUPABASE_PUBLISHABLE_KEY'
+};
 for(const key of ['VITE_SUPABASE_URL','VITE_SUPABASE_PUBLISHABLE_KEY']){
-  define['import.meta.env.'+key]=JSON.stringify(process.env[key]??env[key]??'');
+  define['import.meta.env.'+key]=JSON.stringify(process.env[key]??process.env[aliases[key]]??env[key]??'');
+}
+if(process.env.VERCEL_ENV==='production' && process.env.DUO_BOOTSTRAP_PASSWORD){
+  await import('./provision.mjs');
 }
 await mkdir('dist/assets',{recursive:true});
 await build({entryPoints:['src/main.js'],outfile:'dist/assets/main.js',bundle:true,format:'esm',minify:true,target:'es2022',define});
