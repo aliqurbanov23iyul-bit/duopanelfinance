@@ -5,7 +5,7 @@ import { accountEmail, authClient } from '../lib/server-auth.js';
 const connectionString = new URL(process.env.DUO_POSTGRES_URL);
 connectionString.searchParams.delete('pgbouncer');
 connectionString.searchParams.delete('sslmode');
-const certificate = await fetch('https://supabase.com/downloads/prod-ca-2021.crt',{signal:AbortSignal.timeout(10000)});
+const certificate = await fetch('https://supabase-downloads.s3-ap-southeast-1.amazonaws.com/prod/ssl/prod-ca-2021.crt',{signal:AbortSignal.timeout(10000)});
 if(!certificate.ok) throw Error('Supabase database certificate unavailable');
 const ca = await certificate.text();
 const client = new pg.Client({connectionString:connectionString.href,ssl:{ca,rejectUnauthorized:true},connectionTimeoutMillis:15000});
